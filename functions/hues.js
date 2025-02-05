@@ -1,41 +1,22 @@
-// functions/hues.js
-let hues = [0, 120, 240]; // Initial hue values
+// netlify/functions/hues.js
+exports.handler = async (event, context) => {
+    try {
+        // Generate random hue values between 0 and 360
+        const hues = [
+            Math.floor(Math.random() * 360),
+            Math.floor(Math.random() * 360),
+            Math.floor(Math.random() * 360)
+        ];
 
-exports.handler = async (event) => {
-    if (event.httpMethod === 'GET') {
+        // Return the hues as a JSON response
         return {
             statusCode: 200,
-            body: JSON.stringify({ hues }),
-            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hues })
+        };
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Failed to generate hues', error: error.message })
         };
     }
-
-    if (event.httpMethod === 'POST') {
-        try {
-            const body = JSON.parse(event.body);
-            if (body.hues && Array.isArray(body.hues)) {
-                hues = body.hues;
-                return {
-                    statusCode: 200,
-                    body: JSON.stringify({ message: 'Hues updated successfully' }),
-                    headers: { 'Content-Type': 'application/json' },
-                };
-            } else {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: 'Invalid data format' }),
-                };
-            }
-        } catch (err) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Invalid JSON' }),
-            };
-        }
-    }
-
-    return {
-        statusCode: 405,
-        body: JSON.stringify({ error: 'Method Not Allowed' }),
-    };
 };
